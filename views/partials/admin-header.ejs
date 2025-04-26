@@ -1,0 +1,20 @@
+<!-- views/partials/admin-header.ejs -->
+<div style="background: #ccc; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+  
+    <!-- Left links -->
+    <div>
+      <a href="/" style="margin-right: 10px;">Home</a>
+      <a href="/admin/dashboard" style="margin-right: 10px;">Admin Dashboard</a>
+      <a href="/admin/add-product" style="margin-right: 10px;">Add Product</a>
+    </div>
+  
+    <!-- Right info -->
+    <% if (user) { %>
+      <div>
+        <span style="margin-right: 10px;">Hello Admin, <%= user.username %></span>
+        <a href="/logout">Logout</a>
+      </div>
+    <% } %>
+  
+  </div>
+  

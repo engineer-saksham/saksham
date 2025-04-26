@@ -1,0 +1,17 @@
+<div style="background: #ccc; padding: 10px; display: flex; justify-content: space-between;">
+  <!-- Left side for Home link -->
+  <div>
+    <a href="/">Home</a>
+  </div>
+
+  <!-- Right side for Login, Signup, Hello, and Logout -->
+  <div style="text-align: right;">
+    <% if (loggedIn) { %>
+      <span style="margin-left: 20px;">Hello, <%= user.username %></span>
+      <a href="/logout" style="margin-left: 10px;">Logout</a>
+    <% } else { %>
+      <a href="/login" style="margin-left: 10px;">Login</a>
+      <a href="/signup" style="margin-left: 10px;">Signup</a>
+    <% } %>
+  </div>
+</div>

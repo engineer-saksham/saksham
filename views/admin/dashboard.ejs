@@ -1,0 +1,24 @@
+<!-- views/admin/dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <%- include('../partials/admin-header', { user: user }) %>
+
+  <h1>Welcome to Admin Dashboard</h1>
+  
+  <ul>
+    <% products.forEach(product => { %>
+      <li>
+        <img src="<%= product.imageUrl %>" alt="<%= product.name %>" style="width: 100px;">
+        <h3><%= product.name %></h3>
+        <p><%= product.category %> - $<%= product.price %></p>
+        <p><%= product.description %></p>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>
