@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const path = require('path');
+const homeRoutes = require('./routes/homeRoutes'); // Ya jis naam se banaya
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use('/', userRoutes); // Routes for user login, signup, etc.
 app.use('/admin', adminRoutes); // Routes for admin functionality
+app.use('/', homeRoutes);
 
 mongoose.connect('mongodb://localhost/ecommerce', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))

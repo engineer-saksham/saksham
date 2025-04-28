@@ -23,40 +23,35 @@ router.get('/add-product', isAdmin, async (req, res) => {
   }
 });
 
-// Admin product add route (POST)
 router.post('/add-product', isAdmin, async (req, res) => {
   const { name, imageUrl, price, description, category } = req.body;
 
-  if (!name || !imageUrl || !price || !description || !category) {
-    try {
-      const user = await User.findById(req.session.userId);
-      return res.render('admin/add-product', { user: user, error: 'All fields are required!' });
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/login');
-    }
-  }
-
-  const newProduct = new Product({
-    name,
-    imageUrl,
-    price,
-    description,
-    category,
-  });
-
   try {
+    if (!name || !imageUrl || !price || !description || !category) {
+      const user = await User.findById(req.session.userId);
+      return res.render('admin/add-product', { user, error: 'All fields are required!' });
+    }
+
+    // ✅ Find the highest productId
+    const lastProduct = await Product.findOne().sort({ productId: -1 });
+    const nextProductId = lastProduct ? lastProduct.productId + 1 : 1;
+
+    // ✅ Create new product
+    const newProduct = new Product({
+      productId: nextProductId,
+      name,
+      imageUrl,
+      price,
+      description,
+      category
+    });
+
     await newProduct.save();
-    res.redirect('/admin/dashboard'); // Redirect to admin dashboard after saving
+    res.redirect('/admin/dashboard');
   } catch (error) {
     console.error(error);
-    try {
-      const user = await User.findById(req.session.userId);
-      return res.render('admin/add-product', { user: user, error: 'Something went wrong. Please try again.' });
-    } catch (innerError) {
-      console.error(innerError);
-      return res.redirect('/login');
-    }
+    const user = await User.findById(req.session.userId);
+    return res.render('admin/add-product', { user, error: 'Something went wrong. Please try again.' });
   }
 });
 

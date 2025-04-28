@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders</title>
+</head>
+<body>
+  <%- include('partials/user-header', { user: user }) %>
+
+  <h1>My Orders</h1>
+
+  <% if (orders.length > 0) { %>
+    <ul>
+      <% orders.forEach(order => { %>
+        <li>
+          Order No: <%= order.orderNumber %> | 
+          Product: <%= order.productId.name %> |
+          Price: ₹<%= order.productId.price %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>No orders placed yet.</p>
+  <% } %>
+
+</body>
+</html>

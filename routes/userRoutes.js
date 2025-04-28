@@ -3,13 +3,21 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const User = require('../models/User'); // Capital 'U' for model
+const Product = require('../models/Product');
+const Order = require('../models/order'); 
 const router = express.Router();
 
-// Home Route
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const loggedIn = !!req.session.username;
   const user = { username: req.session.username || '' };
-  res.render('home', { loggedIn, user });
+
+  try {
+    const products = await Product.find(); // ⭐ Product fetch kar liya
+    res.render('home', { loggedIn, user, products }); // ⭐ products bhi bhej diya
+  } catch (error) {
+    console.error(error);
+    res.render('home', { loggedIn, user, products: [] }); // Error me bhi empty bhejna
+  }
 });
 
 // Signup Page (GET)
@@ -95,6 +103,53 @@ router.post('/login', async (req, res) => {
     res.render('login', { error: 'Something went wrong. Please try again.' });
   }
 });
+router.post('/place-order/:productId', async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+
+  const productId = req.params.productId;
+  const userId = req.session.userId;
+
+  try {
+    // ✅ Find the last order safely
+    const lastOrder = await Order.findOne().sort({ orderNumber: -1 });
+    let nextOrderNumber = 1001;  // Default starting order no.
+
+    if (lastOrder && lastOrder.orderNumber) {
+      nextOrderNumber = lastOrder.orderNumber + 1;
+    }
+
+    // ✅ Create new order
+    const newOrder = new Order({
+      orderNumber: nextOrderNumber,
+      userId,
+      productId
+    });
+
+    await newOrder.save();
+    res.redirect('/my-orders');
+  } catch (error) {
+    console.error(error);
+    res.redirect('/');
+  }
+});
+router.get('/my-orders', async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+
+  try {
+    // Find all orders of the logged-in user
+    const orders = await Order.find({ userId: req.session.userId }).populate('productId');
+    
+    res.render('my-orders', { orders, user: { username: req.session.username } });
+  } catch (error) {
+    console.error(error);
+    res.redirect('/');
+  }
+});
+
 
 
 // Logout
